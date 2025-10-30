@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Витрина товаров</title>
+</head>
+
+<body>
+<form method="GET" th:action="@{${postsAction}}">
+    <button style="float:right;">На главную</button>
+</form>
+
+<form
+    method="POST"
+    th:action="@{${editPostAction+'/'+post.getId()}}"
+    enctype="multipart/form-data">
+    <table style="width:50%;margin-left:auto;margin-right:auto;">
+        <tr>
+            <td>
+                <label for="title">Название</label>
+                <textarea rows="2" style="width: 100%;" id="title" name="title"
+                th:text="${post==null ? '' : post.getTitle()}" required>
+                </textarea>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label for="imageFile">Изображение</label>
+                <input type="file" id="imageFile" name="imageFile">
+                <div th:if="${post != null and post.imagePath != null}">
+                    <img height="300" th:src="@{${post.getImagePath()}}" alt="Image">
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label for="text">Текст</label>
+                <textarea rows="20" style="width: 100%;" id="text" name="text"
+                th:text="${post==null ? '' : post.getText()}" required>
+                </textarea>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label for="tags">Теги (через пробел или запятую)</label>
+                <textarea rows="2" style="width: 100%;" id="tags" name="tags"
+                th:text="${post == null} ? '' : ${#strings.arrayJoin(post.getTags().toArray(), ' ')}" required>
+                </textarea>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button style="float:right;" th:text="Редактировать"
+                ></button>
+            </td>
+        </tr>
+    </table>
+</form>
+</body>
+</html>

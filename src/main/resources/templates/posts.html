@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Витрина товаров</title>
+</head>
+
+<body>
+<form method="GET" th:action="@{${addPostAction}}">
+    <button style="float:right;">Добавить пост</button>
+</form>
+
+<table style="width:50%;margin-left:auto;margin-right:auto;">
+    <tr>
+        <td>
+            <form method="GET" th:action="@{${postsAction}}" >
+                <input type="hidden" name="search_tag" th:value="@{${search_tag}}">
+                <p>
+                    <label for="pageSize">Число постов на странице: </label>
+                    <select id="pageSize" name="page_size" onchange="this.form.submit()">
+                        <option value="1" th:selected="@{${postsPage.pageSize()==1}}">1</option>
+                        <option value="5" th:selected="@{${postsPage.pageSize()==5}}">5</option>
+                        <option value="10" th:selected="@{${postsPage.pageSize()==10}}">10</option>
+                        <option value="20" th:selected="@{${postsPage.pageSize()==20}}">20</option>
+                    </select>
+                </p>
+                <p>
+                    <button
+                            th:if="@{${postsPage.hasPrevious()}}"
+                            name="pageNumber"
+                            th:value="@{${postsPage.pageNumber()-1}}">
+                        &lt;
+                    </button>
+                    <span th:text="@{${'Страница: '+postsPage.pageNumber()}}"></span>
+                    <button
+                            th:if="@{${postsPage.hasNext()}}"
+                            name="pageNumber"
+                            th:value="@{${postsPage.pageNumber()+1}}"
+                    >
+                        &gt;
+                    </button>
+                </p>
+            </form>
+        </td>
+    </tr>
+
+    <tr>
+        <td>
+            <form method="GET" th:action="@{${postsAction}}">
+                <p>
+                    <input
+                            id="search"
+                            type="text"
+                            placeholder="Найти по тегу: "
+                            style="width:300px;"
+                            name="search_tag"
+                            th:value="@{${search_tag}}"
+                    >
+                    <button name="action">&#128269;</button>
+                </p>
+            </form>
+        </td>
+        <td>
+            <p>
+                <label th:text="@{${'Всего постов в системе: '+allPostsCount}}"></label>
+            </p>
+        </td>
+    </tr>
+
+    <tr th:each="post : ${posts}">
+        <td style="border-bottom:thin solid;">
+            <h2 th:text="${post.getTitle()}"></h2>
+            <p>
+                <a th:href="@{${postsAction+'/'+post.getId()}}">
+                    <img height="300" th:src="@{${post.getImagePath()}}" alt="Image">
+                </a>
+            </p>
+            <p th:text="@{${post.getText()}}"></p>
+            <p>
+                <span th:text="@{${'&#x1F44D; '+post.getLikesCount()}}"></span>
+                <span th:text="@{${'&#x2709; '+post.getComments().size()}}"></span>
+            </p>
+            <p>
+                <span th:each="tag : ${post.getTags()}" th:text="${'#'+tag+' '}"></span>
+            </p>
+        </td>
+    </tr>
+</table>
+</body>
+</html>
