@@ -2,11 +2,13 @@ package org.simple_spring_boot_blog.repository;
 
 import org.simple_spring_boot_blog.model.Post;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class JdbcNativePostRepository implements PostRepository {
@@ -68,19 +70,24 @@ public class JdbcNativePostRepository implements PostRepository {
     }
 
     @Override
-    public Post getPostById(Long id) {
-        return jdbcTemplate.queryForObject(
-                "select * from " + dbName + " where id=?",
-                new Object[]{id},
-                (rs, rowNum) -> new Post(
-                        rs.getLong("id"),
-                        rs.getString("title"),
-                        rs.getString("imagePath"),
-                        rs.getInt("likesCount"),
-                        rs.getString("text"),
-                        tagsFromDatabaseValue(rs.getString("tags"))
-                )
-        );
+    public Optional<Post> getPostById(Long id) {
+        try {
+            Post post = jdbcTemplate.queryForObject(
+                    "select * from " + dbName + " where id=?",
+                    new Object[]{id},
+                    (rs, rowNum) -> new Post(
+                            rs.getLong("id"),
+                            rs.getString("title"),
+                            rs.getString("imagePath"),
+                            rs.getInt("likesCount"),
+                            rs.getString("text"),
+                            tagsFromDatabaseValue(rs.getString("tags"))
+                    )
+            );
+            return Optional.ofNullable(post);
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
     }
 
     @Override

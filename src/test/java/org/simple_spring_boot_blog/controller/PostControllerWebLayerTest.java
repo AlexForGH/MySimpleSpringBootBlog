@@ -9,6 +9,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -36,7 +37,7 @@ public class PostControllerWebLayerTest {
         );
         testPost.setComments(List.of());
 
-        when(postService.getPostById(1L)).thenReturn(testPost);
+        when(postService.getPostById(1L)).thenReturn(Optional.of(testPost));
 
         mockMvc.perform(get("/posts/1"))
                 .andExpect(status().isOk())

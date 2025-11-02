@@ -21,6 +21,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -90,9 +91,9 @@ public class PostService {
         return postRepository.getCountOfAllPosts();
     }
 
-    public Post getPostById(Long id) {
-        Post post = postRepository.getPostById(id);
-        post.setComments(getCommentsByPostId(id));
+    public Optional<Post> getPostById(Long id) {
+        Optional<Post> post = postRepository.getPostById(id);
+        post.ifPresent(p -> p.setComments(getCommentsByPostId(id)));
         return post;
     }
 
