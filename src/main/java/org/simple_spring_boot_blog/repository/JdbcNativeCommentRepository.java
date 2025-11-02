@@ -8,14 +8,14 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public class JdbcNativeCommentsRepository implements CommentsRepository {
+public class JdbcNativeCommentRepository implements CommentRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
     private final String dbName = "comments";
 
     @Autowired
-    public JdbcNativeCommentsRepository(JdbcTemplate jdbcTemplate) {
+    public JdbcNativeCommentRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

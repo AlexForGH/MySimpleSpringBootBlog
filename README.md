@@ -40,7 +40,7 @@ Technology stack: Spring Framework, Spring Boot, H2DB, HTML, Thymeleaf, Junit5, 
         - right-click on the test folder and select "Run Tests in 'MySimpleSpringBootBlog'"
         - all project tests will run.
     2. Without an IDE:
-        - open a terminal in the project folder and enter the command: ./mvmw test
+        - open a terminal in the project folder and enter the command: ./mvnw test
         - all project tests will run.
 
 
@@ -84,6 +84,6 @@ Technology stack: Spring Framework, Spring Boot, H2DB, HTML, Thymeleaf, Junit5, 
             - на папке test нажать ПКМ и выбрать пункт "Run Tests in 'MySimpleSpringBootBlog'"
             - запустятся все тесты проекта
     2. Без использования IDE
-            - в папке проекта вызвать терминал и ввести команду: ./mvmw test
+            - в папке проекта вызвать терминал и ввести команду: ./mvnw test
             - запустятся все тесты проекта
 

@@ -4,7 +4,7 @@ import org.simple_spring_boot_blog.model.Comment;
 
 import java.util.List;
 
-public interface CommentsRepository {
+public interface CommentRepository {
     List<Comment> getCommentsByPostId(Long postId);
     Comment getCommentById(Long id);
     void addComment(Comment comment);

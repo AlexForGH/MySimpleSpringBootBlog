@@ -1,5 +1,6 @@
 package org.simple_spring_boot_blog.controller;
 
+import jakarta.validation.Valid;
 import org.simple_spring_boot_blog.dto.PagingInfoDto;
 import org.simple_spring_boot_blog.dto.PostDto;
 import org.simple_spring_boot_blog.model.Comment;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,20 +19,25 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static org.simple_spring_boot_blog.controller.PostController.Actions.*;
+
 @Controller
 @RequestMapping("/")
 public class PostController {
 
     private final PostService postService;
 
-    private final String postsAction = "/posts";
-    private final String addPostAction = postsAction + "/add";
-    private final String editPostAction = postsAction + "/edit";
-    private final String deletePostAction = postsAction + "/delete";
-    private final String likesPostAction = postsAction + "/likes";
-    private final String addCommentAction = postsAction + "/comment/add";
-    private final String editCommentAction = postsAction + "/comment/edit";
-    private final String deleteCommentAction = postsAction + "/comment/delete";
+    static final class Actions {
+        static final String postsAction = "/posts";
+        static final String addPostAction = postsAction + "/add";
+        static final String editPostAction = postsAction + "/edit";
+        static final String deletePostAction = postsAction + "/delete";
+        static final String likesPostAction = postsAction + "/likes";
+        static final String addCommentAction = postsAction + "/comment/add";
+        static final String editCommentAction = postsAction + "/comment/edit";
+        static final String deleteCommentAction = postsAction + "/comment/delete";
+
+    }
 
     @Autowired
     public PostController(PostService postService) {
@@ -87,7 +94,7 @@ public class PostController {
 
     @GetMapping(addPostAction)
     public String addPost(Model model) {
-        model.addAttribute("post", null);
+        model.addAttribute("postDto", new PostDto());
         model.addAttribute("postsAction", postsAction);
         model.addAttribute("addPostAction", addPostAction);
         return "add-post";
@@ -95,8 +102,14 @@ public class PostController {
 
     @PostMapping(addPostAction)
     public String addPost(
-            @ModelAttribute PostDto postDto,
+            @Valid @ModelAttribute("postDto") PostDto postDto,
+            BindingResult bindingResult,
             @RequestParam("imageFile") MultipartFile imageFile) throws IOException {
+
+        if (bindingResult.hasErrors()) {
+            return "add-post";
+        }
+
         postService.addPost(postDto, imageFile);
         return "redirect:" + postsAction;
     }

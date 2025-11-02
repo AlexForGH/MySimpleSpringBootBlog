@@ -3,7 +3,7 @@ package org.simple_spring_boot_blog.service;
 import org.simple_spring_boot_blog.dto.PostDto;
 import org.simple_spring_boot_blog.model.Comment;
 import org.simple_spring_boot_blog.model.Post;
-import org.simple_spring_boot_blog.repository.CommentsRepository;
+import org.simple_spring_boot_blog.repository.CommentRepository;
 import org.simple_spring_boot_blog.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,15 +29,15 @@ import java.util.stream.Collectors;
 public class PostService {
 
     private final PostRepository postRepository;
-    private final CommentsRepository commentsRepository;
+    private final CommentRepository commentRepository;
 
     @Value("${upload.path}")
     private String uploadDir;
 
     @Autowired
-    public PostService(PostRepository postRepository, CommentsRepository commentsRepository) {
+    public PostService(PostRepository postRepository, CommentRepository commentRepository) {
         this.postRepository = postRepository;
-        this.commentsRepository = commentsRepository;
+        this.commentRepository = commentRepository;
     }
 
     public Page<Post> getAllPostsOrByTagWithPagination(String searchTag, long pageNumber, long pageSize) {
@@ -78,7 +78,7 @@ public class PostService {
     private List<Post> getAllPostsWithPaginationParams(long pageNumber, long pageSize) {
         List<Post> posts = postRepository.getAllPostsWithPaginationParams(pageNumber, pageSize);
         // posts.forEach(post -> post.setComments(getCommentsByPostId(post.getId())));
-        List<Comment> allComments = commentsRepository.getAllComments();
+        List<Comment> allComments = commentRepository.getAllComments();
         posts.forEach(post -> post.setComments(
                         allComments.stream().filter(
                                 c -> post.getId().equals(c.getPost_id())
@@ -131,19 +131,19 @@ public class PostService {
     }
 
     public void addComment(Comment comment) {
-        commentsRepository.addComment(comment);
+        commentRepository.addComment(comment);
     }
 
     public void editComment(Comment comment) {
-        commentsRepository.editComment(comment);
+        commentRepository.editComment(comment);
     }
 
     public void deleteCommentById(Long id) {
-        commentsRepository.deleteCommentById(id);
+        commentRepository.deleteCommentById(id);
     }
 
     private List<Comment> getCommentsByPostId(Long id) {
-        List<Comment> comments = commentsRepository.getCommentsByPostId(id);
+        List<Comment> comments = commentRepository.getCommentsByPostId(id);
         if (comments.isEmpty()) return List.of();
         return comments;
     }
