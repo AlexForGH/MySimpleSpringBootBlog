@@ -10,4 +10,5 @@ public interface CommentsRepository {
     void addComment(Comment comment);
     void editComment(Comment comment);
     void deleteCommentById(Long id);
+    List<Comment> getAllComments();
 }

@@ -77,7 +77,15 @@ public class PostService {
 
     private List<Post> getAllPostsWithPaginationParams(long pageNumber, long pageSize) {
         List<Post> posts = postRepository.getAllPostsWithPaginationParams(pageNumber, pageSize);
-        posts.forEach(post -> post.setComments(getCommentsByPostId(post.getId())));
+        // posts.forEach(post -> post.setComments(getCommentsByPostId(post.getId())));
+        List<Comment> allComments = commentsRepository.getAllComments();
+        posts.forEach(post -> post.setComments(
+                        allComments.stream().filter(
+                                c -> post.getId().equals(c.getPost_id())
+                        ).collect(Collectors.toList()
+                        )
+                )
+        );
         return posts;
     }
 

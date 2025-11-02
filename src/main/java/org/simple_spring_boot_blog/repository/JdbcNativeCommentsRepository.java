@@ -69,4 +69,16 @@ public class JdbcNativeCommentsRepository implements CommentsRepository {
                 "delete from " + dbName + " where id = ?", id
         );
     }
+
+    @Override
+    public List<Comment> getAllComments() {
+        return jdbcTemplate.query(
+                "select id, post_id, content from " + dbName,
+                (rs, rowNum) -> new Comment(
+                        rs.getLong("id"),
+                        rs.getLong("post_id"),
+                        rs.getString("content")
+                )
+        );
+    }
 }
