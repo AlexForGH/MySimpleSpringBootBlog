@@ -6,7 +6,6 @@ import org.simple_spring_boot_blog.model.Comment;
 import org.simple_spring_boot_blog.model.Post;
 import org.simple_spring_boot_blog.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,14 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 @Controller
 @RequestMapping("/")
@@ -99,17 +92,8 @@ public class PostController {
     @PostMapping(addPostAction)
     public String addPost(
             @ModelAttribute PostDto postDto,
-            @RequestParam("imageFile") MultipartFile imageFile,
-            @Value("${upload.path}") String uploadDir) throws IOException {
-        String filename = UUID.randomUUID() + "-" + imageFile.getOriginalFilename();
-        Path uploadPath = Paths.get(uploadDir);
-        if (!Files.exists(uploadPath)) Files.createDirectories(uploadPath);
-        try (InputStream inputStream = imageFile.getInputStream()) {
-            Path filePath = uploadPath.resolve(filename);
-            Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
-        }
-        String imagePath = "/images/" + filename;
-        postService.addPost(postDto, imagePath);
+            @RequestParam("imageFile") MultipartFile imageFile) throws IOException {
+        postService.addPost(postDto, imageFile);
         return "redirect:" + postsAction;
     }
 
@@ -126,28 +110,17 @@ public class PostController {
     public String editPost(
             @PathVariable("id") Long id,
             @ModelAttribute PostDto postDto,
-            @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
-            @Value("${upload.path}") String uploadDir
+            @RequestParam(value = "imageFile", required = false) MultipartFile imageFile
     ) throws IOException {
         Post post = postService.getPostById(id);
         if (!post.getTitle().equals(postDto.getTitle())) post.setTitle(postDto.getTitle());
-        if (imageFile != null && !imageFile.isEmpty()) {
-            String filename = UUID.randomUUID() + "-" + imageFile.getOriginalFilename();
-            Path uploadPath = Paths.get(uploadDir);
-            if (!Files.exists(uploadPath)) Files.createDirectories(uploadPath);
-            try (InputStream inputStream = imageFile.getInputStream()) {
-                Path filePath = uploadPath.resolve(filename);
-                Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
-            }
-            post.setImagePath("/images/" + filename);
-        }
         if (!post.getText().equals(postDto.getText())) post.setText(postDto.getText());
         List<String> tags = Arrays
                 .stream(postDto.getTags().split("[,\\s]+"))
                 .filter(s -> !s.isEmpty())
                 .toList();
         if (!post.getTags().equals(tags)) post.setTags(tags);
-        postService.editPost(post);
+        postService.editPost(post, imageFile);
         return "redirect:" + postsAction;
     }
 
@@ -164,12 +137,12 @@ public class PostController {
     public String likePost(
             @PathVariable(name = "id") Long id,
             @RequestParam(value = "like") Boolean like
-    ) {
+    ) throws IOException {
         Post post = postService.getPostById(id);
         int currentLikes = post.getLikesCount();
         if (like) post.setLikesCount(currentLikes + 1);
         else post.setLikesCount(currentLikes - 1);
-        postService.editPost(post);
+        postService.editPost(post, null);
         return "redirect:" + postsAction + "/" + id;
     }
 
