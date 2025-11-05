@@ -7,11 +7,11 @@ import org.simple_spring_boot_blog.model.Post;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -64,16 +64,16 @@ public class JdbcNativePostRepositoryTest {
     }
 
     @Test
-    void getPostById_WhenPostNotExists_ShouldThrowException() {
-        assertThrows(
-                EmptyResultDataAccessException.class,
-                () -> postRepository.getPostById(999L)
+    void getPostById_WhenPostNotExists_EqualsAnEmptyPost() {
+        assertEquals(
+                Optional.empty(),
+                postRepository.getPostById(999L)
         );
     }
 
     @Test
     void getPostById_WhenPostExists_ShouldReturnPost() {
-        Post result = postRepository.getPostById(2L);
+        Post result = postRepository.getPostById(2L).get();
         assertNotNull(result);
         assertEquals(2L, result.getId());
         assertEquals("manager", result.getTitle());

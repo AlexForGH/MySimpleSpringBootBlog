@@ -8,14 +8,14 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public class JdbcNativeCommentsRepository implements CommentsRepository {
+public class JdbcNativeCommentRepository implements CommentRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
     private final String dbName = "comments";
 
     @Autowired
-    public JdbcNativeCommentsRepository(JdbcTemplate jdbcTemplate) {
+    public JdbcNativeCommentRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
@@ -67,6 +67,18 @@ public class JdbcNativeCommentsRepository implements CommentsRepository {
     public void deleteCommentById(Long id) {
         jdbcTemplate.update(
                 "delete from " + dbName + " where id = ?", id
+        );
+    }
+
+    @Override
+    public List<Comment> getAllComments() {
+        return jdbcTemplate.query(
+                "select id, post_id, content from " + dbName,
+                (rs, rowNum) -> new Comment(
+                        rs.getLong("id"),
+                        rs.getLong("post_id"),
+                        rs.getString("content")
+                )
         );
     }
 }

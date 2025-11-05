@@ -5,6 +5,60 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Витрина товаров</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        textarea, input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 13px;
+            font-weight: bold;
+            margin-top: 5px;
+            padding: 8px 12px;
+            background-color: #fdeded;
+            border: 1px solid #f5c6cb;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .error-icon {
+            color: #e74c3c;
+            margin-right: 5px;
+        }
+
+        textarea:focus, input[type="file"]:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+    </style>
 </head>
 
 <body>
@@ -15,12 +69,17 @@
 <form
         method="POST"
         th:action="@{${addPostAction}}"
+        th:object="${postDto}"
         enctype="multipart/form-data">
     <table style="width:50%;margin-left:auto;margin-right:auto;">
         <tr>
             <td>
                 <label for="title">Введите название</label>
-                <textarea rows="2" style="width: 100%;" id="title" name="title" required></textarea>
+                <textarea rows="2" style="width: 100%;" id="title" name="title" th:field="*{title}" required></textarea>
+                <div th:if="${#fields.hasErrors('title')}" class="error-message">
+                    <span class="error-icon">⚠</span>
+                    <span th:errors="*{title}"></span>
+                </div>
             </td>
         </tr>
         <tr>
@@ -32,7 +91,11 @@
         <tr>
             <td>
                 <label for="text">Добавьте текст</label>
-                <textarea rows="20" style="width: 100%;" id="text" name="text" required></textarea>
+                <textarea rows="20" style="width: 100%;" id="text" name="text" th:field="*{text}" required></textarea>
+                <div th:if="${#fields.hasErrors('text')}" class="error-message">
+                    <span class="error-icon">⚠</span>
+                    <span th:errors="*{text}"></span>
+                </div>
             </td>
         </tr>
         <tr>

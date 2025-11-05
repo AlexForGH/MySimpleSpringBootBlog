@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Пост не найден</title>
+</head>
+<body>
+<div class="error-container">
+    <h1 th:text="${errorTitle}">Пост не найден</h1>
+    <p th:text="${errorMessage}">Запрошенный пост не существует</p>
+    <a th:href="@{${backLink}}" class="btn btn-primary">Вернуться к списку постов</a>
+</div>
+</body>
+</html>
